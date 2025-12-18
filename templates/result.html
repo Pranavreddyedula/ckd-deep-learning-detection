@@ -1,28 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>CKD Result</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>CKD Prediction Result</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+        }
+        img {
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            margin: 10px;
+        }
+        .card {
+            background: #020617;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px auto;
+            width: 80%;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="card">
-        <h1>{{ result }}</h1>
-        <h2>Risk Level: {{ risk }}</h2>
-        <h3>Confidence: {{ confidence }}%</h3>
+<h1>🧠 CKD Prediction Result</h1>
 
-        <img src="/static/{{ image }}" class="kidney-img">
+<div class="card">
+    <h2>{{ result }}</h2>
+    <h3>Risk Level: {{ risk }}</h3>
+    <h3>Confidence: {{ confidence }}%</h3>
 
-        <h2>📊 Model Performance</h2>
-        <img src="/static/accuracy.png" class="graph-img">
-        <img src="/static/confusion_matrix.png" class="graph-img">
-
-        <br><br>
-        <a href="/">⬅ Back to Prediction</a>
-    </div>
+    <img src="{{ url_for('static', filename=image) }}" width="300">
 </div>
+
+<div class="card">
+    <h2>📊 Model Performance</h2>
+    <img src="{{ url_for('static', filename=accuracy_img) }}" width="350">
+    <img src="{{ url_for('static', filename=cm_img) }}" width="350">
+</div>
+
+<a href="/" style="color:#38bdf8;">⬅ Back to Prediction</a>
 
 </body>
 </html>
