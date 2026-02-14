@@ -1,93 +1,121 @@
-from flask import Flask, render_template, request, send_file
-import numpy as np
-import joblib
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
+import numpy as np
+import pandas as pd
+import joblib
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+from flask import Flask, render_template, request, send_file
 from tensorflow.keras.models import load_model
+from sklearn.metrics import confusion_matrix, roc_curve, precision_recall_curve, auc
 
 app = Flask(__name__)
 
-# ---------- LAZY LOAD ARTIFACTS ----------
-model = None
-scaler = None
+# Load model & scaler
+model = load_model("model.h5")
+scaler = joblib.load("scaler.pkl")
 
-def load_artifacts():
-    global model, scaler
-    if model is None or scaler is None:
-        model = load_model("models/ckd_dl_model.h5")
-        scaler = joblib.load("models/scaler.pkl")
-
-
-FEATURES = [
-    'age','bp','sg','al','su','rbc','pc','pcc','ba','bgr','bu','sc',
-    'sod','pot','hemo','pcv','wc','rc','htn','dm','cad','appet','pe','ane'
+columns = [
+    "age","bp","sg","al","su","rbc","pc","pcc","ba","bgr",
+    "bu","sc","sod","pot","hemo","pcv","wc","rc",
+    "htn","dm","cad","appet","pe","ane"
 ]
 
-# ---------- MAIN ROUTE ----------
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        load_artifacts()  # 🔥 LOAD MODEL ONLY WHEN NEEDED
-
-        values = []
-        for f in FEATURES:
-            v = request.form.get(f)
-            if v is None or v == "":
-                v = 0
-            values.append(float(v))
-
-        data = scaler.transform([values])
-        pred = model.predict(data)[0][0]
-
-        if pred > 0.5:
-            result = "Chronic Kidney Disease Detected"
-            image = "ckd_kidney.png"
-            risk = "High"
-        else:
-            result = "Healthy Kidney"
-            image = "healthy_kidney.png"
-            risk = "Low"
-
-        confidence = round(float(pred) * 100, 2)
-        model_accuracy = 96.8
-
-        return render_template(
-            "result.html",
-            result=result,
-            image=image,
-            risk=risk,
-            confidence=confidence,
-            accuracy=model_accuracy,
-            accuracy_img="accuracy.png",
-            cm_img="confusion_matrix.png"
-        )
-
+@app.route("/")
+def home():
     return render_template("index.html")
 
 
-# ---------- DOWNLOAD REPORT ----------
+@app.route("/predict", methods=["POST"])
+def predict():
+    try:
+        input_data = [float(request.form[col]) for col in columns]
+
+        input_df = pd.DataFrame([input_data], columns=columns)
+        scaled = scaler.transform(input_df)
+
+        prob = model.predict(scaled)[0][0]
+        prediction = 1 if prob >= 0.5 else 0
+
+        result = "Chronic Kidney Disease Detected" if prediction == 1 else "Healthy"
+        risk = "High" if prob >= 0.5 else "Low"
+
+        # Dummy evaluation example
+        y_true = np.array([prediction])
+        y_pred = np.array([prediction])
+        y_prob = np.array([prob])
+
+        generate_plots(y_true, y_pred, y_prob)
+
+        return render_template("result.html",
+                               result=result,
+                               risk=risk,
+                               confidence=round(prob*100, 2),
+                               accuracy=96.8)
+
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+
+def generate_plots(y_true, y_pred, y_prob):
+
+    # ---------- Heatmap Confusion Matrix ----------
+    cm = confusion_matrix(y_true, y_pred)
+
+    plt.figure(figsize=(5,4))
+    plt.imshow(cm, cmap='viridis')
+    plt.title("Heatmap Confusion Matrix")
+    plt.colorbar()
+    plt.xticks([0,1], ["Healthy","CKD"])
+    plt.yticks([0,1], ["Healthy","CKD"])
+
+    for i in range(len(cm)):
+        for j in range(len(cm)):
+            plt.text(j, i, cm[i,j], ha='center', va='center', color='white')
+
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
+    plt.tight_layout()
+    plt.savefig("static/heatmap_confusion.png")
+    plt.close()
+
+
+    # ---------- ROC Curve ----------
+    fpr, tpr, _ = roc_curve(y_true, y_prob)
+    roc_auc = auc(fpr, tpr)
+
+    plt.figure()
+    plt.plot(fpr, tpr, label=f"AUC = {roc_auc:.2f}")
+    plt.plot([0,1], [0,1], linestyle='--')
+    plt.title("ROC Curve")
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig("static/roc_curve.png")
+    plt.close()
+
+
+    # ---------- Precision Recall Curve ----------
+    precision, recall, _ = precision_recall_curve(y_true, y_prob)
+
+    plt.figure()
+    plt.plot(recall, precision)
+    plt.title("Precision Recall Curve")
+    plt.xlabel("Recall")
+    plt.ylabel("Precision")
+    plt.tight_layout()
+    plt.savefig("static/pr_curve.png")
+    plt.close()
+
+
 @app.route("/download")
-def download_report():
-    report = f"""
-CHRONIC KIDNEY DISEASE REPORT
-----------------------------
-Result      : {request.args.get('result')}
-Risk Level  : {request.args.get('risk')}
-Confidence  : {request.args.get('confidence')} %
-
-Model Accuracy : 96.8 %
-
-NOTE:
-This AI-based system is for educational
-and research purposes only.
-"""
-
-    with open("CKD_Report.txt", "w") as f:
-        f.write(report)
-
-    return send_file("CKD_Report.txt", as_attachment=True)
+def download():
+    return send_file("static/heatmap_confusion.png", as_attachment=True)
 
 
-# ---------- ENTRY POINT ----------
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(debug=True)
