@@ -1,33 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CKD Result</title>
+    <title>CKD Prediction Result</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
+
 <body>
 
 <div class="container">
+
     <h1>🩺 Diagnosis Result</h1>
 
-    <h2>{{ result }}</h2>
-    <p><b>Risk Level:</b> {{ risk }}</p>
-    <p><b>Confidence:</b> {{ confidence }}%</p>
-    <p><b>Model Accuracy:</b> {{ accuracy }}%</p>
+    <!-- ================= RESULT CARD ================= -->
+    <div class="result-card">
 
-    <img src="/static/{{ image }}" class="kidney-img">
+        <h2 class="{% if risk == 'High' %}high-risk{% else %}low-risk{% endif %}">
+            {{ result }}
+        </h2>
 
-    <h3>📊 Model Performance</h3>
-    <img src="/static/{{ accuracy_img }}" class="graph">
-    <img src="/static/{{ cm_img }}" class="graph">
+        <p><b>Risk Level:</b> 
+            <span class="{% if risk == 'High' %}risk-high{% else %}risk-low{% endif %}">
+                {{ risk }}
+            </span>
+        </p>
 
-    <br><br>
-    <a href="/download?result={{ result }}&risk={{ risk }}&confidence={{ confidence }}">
-        <button>⬇ Download Medical Report</button>
-    </a>
+        <p><b>Confidence:</b> {{ confidence }}%</p>
+        <p><b>Model Accuracy:</b> {{ accuracy }}%</p>
 
-    <br><br>
-    <a href="/">🔙 Go Back</a>
+        <img src="{{ url_for('static', filename=image) }}" class="kidney-img">
+
+    </div>
+
+    <hr>
+
+    <!-- ================= DASHBOARD ================= -->
+    <h2>📊 Model Evaluation Dashboard</h2>
+
+    <div class="graph-grid">
+
+        <div class="graph-card">
+            <h3>Accuracy Graph</h3>
+            <img src="{{ url_for('static', filename=accuracy_img) }}">
+        </div>
+
+        <div class="graph-card">
+            <h3>Confusion Matrix</h3>
+            <img src="{{ url_for('static', filename=cm_img) }}">
+        </div>
+
+        <div class="graph-card">
+            <h3>Heatmap Confusion Matrix</h3>
+            <img src="{{ url_for('static', filename=heatmap_img) }}">
+        </div>
+
+        <div class="graph-card">
+            <h3>ROC Curve</h3>
+            <img src="{{ url_for('static', filename=roc_img) }}">
+        </div>
+
+        <div class="graph-card">
+            <h3>Precision Recall Curve</h3>
+            <img src="{{ url_for('static', filename=pr_img) }}">
+        </div>
+
+    </div>
+
+    <br>
+
+    <!-- ================= BUTTONS ================= -->
+    <div class="button-area">
+
+        <a href="/download?result={{ result }}&risk={{ risk }}&confidence={{ confidence }}">
+            <button class="download-btn">⬇ Download Medical Report</button>
+        </a>
+
+        <a href="/">
+            <button class="back-btn">🔙 Go Back</button>
+        </a>
+
+    </div>
+
 </div>
 
 </body>
 </html>
+
