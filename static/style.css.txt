@@ -1,0 +1,193 @@
+/* ================= GLOBAL ================= */
+
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(to right, #eef2f7, #f7f9fc);
+    margin: 0;
+    padding: 0;
+}
+
+/* ================= CONTAINER ================= */
+
+.container {
+    background: white;
+    width: 90%;
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+/* ================= HEADINGS ================= */
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #34495e;
+}
+
+h3 {
+    color: #555;
+}
+
+/* ================= RESULT COLORS ================= */
+
+.high-risk {
+    color: #e74c3c;
+}
+
+.low-risk {
+    color: #27ae60;
+}
+
+.risk-high {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.risk-low {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+/* ================= KIDNEY IMAGE ================= */
+
+.kidney-img {
+    width: 220px;
+    margin: 20px auto;
+    display: block;
+}
+
+/* ================= FORM CARDS ================= */
+
+.card {
+    background: #f7f9fc;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* ================= INPUT FIELDS ================= */
+
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
+
+input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 5px #3498db50;
+}
+
+/* ================= BUTTON AREA ================= */
+
+.buttons {
+    margin-top: 20px;
+}
+
+/* ================= MAIN BUTTON ================= */
+
+button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 8px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #2980b9;
+    transform: scale(1.05);
+}
+
+/* ================= DOWNLOAD BUTTON ================= */
+
+.download-btn {
+    background: #2ecc71;
+}
+
+.download-btn:hover {
+    background: #27ae60;
+}
+
+/* ================= BACK BUTTON ================= */
+
+.back-btn {
+    background: #95a5a6;
+}
+
+.back-btn:hover {
+    background: #7f8c8d;
+}
+
+/* ================= GRAPH GRID ================= */
+
+.graph-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+/* ================= GRAPH CARD ================= */
+
+.graph-card {
+    background: #f7f9fc;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+.graph-card:hover {
+    transform: translateY(-5px);
+}
+
+/* ================= GRAPH IMAGE ================= */
+
+.graph-card img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+/* ================= RESULT CARD ================= */
+
+.result-card {
+    background: #f7f9fc;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+
+    .container {
+        width: 95%;
+        padding: 20px;
+    }
+
+    input {
+        width: 95%;
+    }
+
+    .kidney-img {
+        width: 180px;
+    }
+}
+	 
