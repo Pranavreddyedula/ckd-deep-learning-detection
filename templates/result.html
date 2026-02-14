@@ -1,87 +1,101 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CKD Prediction Result</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
+    <title>CKD Result</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f6f9;
+            text-align: center;
+        }
 
+        .card {
+            background: white;
+            width: 70%;
+            margin: auto;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        .high {
+            color: red;
+            font-weight: bold;
+        }
+
+        .low {
+            color: green;
+            font-weight: bold;
+        }
+
+        img {
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: #2f80ed;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 10px;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background-color: #1c60c9;
+        }
+
+        hr {
+            margin: 25px 0;
+        }
+    </style>
+</head>
 <body>
 
-<div class="container">
+<div class="card">
 
-    <h1>🩺 Diagnosis Result</h1>
+    <h2>🩺 Diagnosis Result</h2>
 
-    <!-- ================= RESULT CARD ================= -->
-    <div class="result-card">
+    <h3>{{ result }}</h3>
 
-        <h2 class="{% if risk == 'High' %}high-risk{% else %}low-risk{% endif %}">
-            {{ result }}
-        </h2>
+    <p>
+        Risk Level:
+        {% if risk == "High" %}
+            <span class="high">{{ risk }}</span>
+        {% else %}
+            <span class="low">{{ risk }}</span>
+        {% endif %}
+    </p>
 
-        <p><b>Risk Level:</b> 
-            <span class="{% if risk == 'High' %}risk-high{% else %}risk-low{% endif %}">
-                {{ risk }}
-            </span>
-        </p>
-
-        <p><b>Confidence:</b> {{ confidence }}%</p>
-        <p><b>Model Accuracy:</b> {{ accuracy }}%</p>
-
-        <img src="{{ url_for('static', filename=image) }}" class="kidney-img">
-
-    </div>
+    <p>Confidence: <strong>{{ confidence }}%</strong></p>
+    <p>Model Accuracy: <strong>{{ accuracy }}%</strong></p>
 
     <hr>
 
-    <!-- ================= DASHBOARD ================= -->
     <h2>📊 Model Evaluation Dashboard</h2>
 
-    <div class="graph-grid">
+    <h3>Heatmap Confusion Matrix</h3>
+    <img src="{{ url_for('static', filename='heatmap_confusion.png') }}" width="500">
 
-        <div class="graph-card">
-            <h3>Accuracy Graph</h3>
-            <img src="{{ url_for('static', filename=accuracy_img) }}">
-        </div>
+    <h3>ROC Curve</h3>
+    <img src="{{ url_for('static', filename='roc_curve.png') }}" width="500">
 
-        <div class="graph-card">
-            <h3>Confusion Matrix</h3>
-            <img src="{{ url_for('static', filename=cm_img) }}">
-        </div>
+    <h3>Precision Recall Curve</h3>
+    <img src="{{ url_for('static', filename='pr_curve.png') }}" width="500">
 
-        <div class="graph-card">
-            <h3>Heatmap Confusion Matrix</h3>
-            <img src="{{ url_for('static', filename=heatmap_img) }}">
-        </div>
+    <br><br>
 
-        <div class="graph-card">
-            <h3>ROC Curve</h3>
-            <img src="{{ url_for('static', filename=roc_img) }}">
-        </div>
-
-        <div class="graph-card">
-            <h3>Precision Recall Curve</h3>
-            <img src="{{ url_for('static', filename=pr_img) }}">
-        </div>
-
-    </div>
-
-    <br>
-
-    <!-- ================= BUTTONS ================= -->
-    <div class="button-area">
-
-        <a href="/download?result={{ result }}&risk={{ risk }}&confidence={{ confidence }}">
-            <button class="download-btn">⬇ Download Medical Report</button>
-        </a>
-
-        <a href="/">
-            <button class="back-btn">🔙 Go Back</button>
-        </a>
-
-    </div>
+    <a href="/download" class="btn">⬇ Download Medical Report</a>
+    <a href="/" class="btn">🔙 Go Back</a>
 
 </div>
 
 </body>
 </html>
-
