@@ -1,69 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>CKD Detection System</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <title>CKD Prediction</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f6f9;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        form {
+            background: white;
+            padding: 30px;
+            width: 60%;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #2f80ed;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1c60c9;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🧠 Chronic Kidney Disease Detection</h1>
+<h1>🧠 Chronic Kidney Disease Prediction</h1>
 
-    <form method="POST">
+<form action="/predict" method="post">
 
-        <!-- VITALS -->
-        <div class="card">
-            <h2>🩺 Vitals</h2>
-            <input name="age" placeholder="Age">
-            <input name="bp" placeholder="Blood Pressure">
-            <input name="sg" placeholder="Specific Gravity">
-        </div>
+{% for col in [
+"age","bp","sg","al","su","rbc","pc","pcc","ba","bgr",
+"bu","sc","sod","pot","hemo","pcv","wc","rc",
+"htn","dm","cad","appet","pe","ane"
+] %}
+<input type="text" name="{{ col }}" placeholder="{{ col | upper }}" required><br>
+{% endfor %}
 
-        <!-- BLOOD & URINE -->
-        <div class="card">
-            <h2>🩸 Blood & Urine</h2>
-            <input name="al" placeholder="Albumin">
-            <input name="su" placeholder="Sugar">
-            <input name="rbc" placeholder="RBC (0/1)">
-            <input name="pc" placeholder="Pus Cell (0/1)">
-            <input name="pcc" placeholder="Pus Cell Clumps (0/1)">
-            <input name="ba" placeholder="Bacteria (0/1)">
-            <input name="bgr" placeholder="Blood Glucose Random">
-            <input name="bu" placeholder="Blood Urea">
-            <input name="sc" placeholder="Serum Creatinine">
-            <input name="sod" placeholder="Sodium">
-            <input name="pot" placeholder="Potassium">
-            <input name="hemo" placeholder="Hemoglobin">
-            <input name="pcv" placeholder="Packed Cell Volume">
-            <input name="wc" placeholder="White Blood Cell Count">
-            <input name="rc" placeholder="Red Blood Cell Count">
-        </div>
+<br>
+<button type="submit">🔍 Predict</button>
 
-        <!-- MEDICAL HISTORY -->
-        <div class="card">
-            <h2>📋 Medical History</h2>
-            <input name="htn" placeholder="Hypertension (0/1)">
-            <input name="dm" placeholder="Diabetes Mellitus (0/1)">
-            <input name="cad" placeholder="Coronary Artery Disease (0/1)">
-            <input name="appet" placeholder="Appetite (0/1)">
-            <input name="pe" placeholder="Pedal Edema (0/1)">
-            <input name="ane" placeholder="Anemia (0/1)">
-        </div>
+</form>
 
-        <!-- AUTO FILL BUTTONS -->
-        <div class="buttons">
-            <button type="button" onclick="fillNormal()">🟢 Normal</button>
-            <button type="button" onclick="fillCKD()">🟡 CKD</button>
-            <button type="button" onclick="fillSevere()">🔴 Severe CKD</button>
-        </div>
-
-        <button class="predict" type="submit">🔍 Predict</button>
-
-    </form>
-</div>
-
-<script src="/static/fill.js"></script>
 </body>
 </html>
